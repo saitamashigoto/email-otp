@@ -1,0 +1,44 @@
+.display-none {
+    display: none !important;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+.verify-otp-wrapper {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.otp-label {
+    width: 100%;
+    display: block;
+}
+
+.otp-btn-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+input.otp {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+button.verify-otp-btn {
+    inline-size: fit-content;
+}
+
+.verify-otp-wrapper {
+    margin-top: 1rem;
+}

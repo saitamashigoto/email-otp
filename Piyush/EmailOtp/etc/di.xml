@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="MyCustomLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="error" xsi:type="object">Piyush\EmailOtp\Logger\Handler\ErrorHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Piyush\EmailOtp\Model\SendMessage">
+        <arguments>
+            <argument name="logger" xsi:type="object">MyCustomLogger</argument>
+        </arguments>
+    </type>
+    <type name="Piyush\EmailOtp\Model\Api\OtpManager">
+        <arguments>
+            <argument name="logger" xsi:type="object">MyCustomLogger</argument>
+        </arguments>
+    </type>
+    <type name="Piyush\EmailOtp\Cron\CleanOtp">
+        <arguments>
+            <argument name="logger" xsi:type="object">MyCustomLogger</argument>
+        </arguments>
+    </type>
+    <type name="Piyush\EmailOtp\Helper\Email">
+        <arguments>
+            <argument name="logger" xsi:type="object">MyCustomLogger</argument>
+        </arguments>
+    </type>
+    <preference for="Piyush\EmailOtp\Api\Data\OtpInterface" type="Piyush\EmailOtp\Model\Otp" />
+    <preference for="Piyush\EmailOtp\Api\GenerateOtpInterface" type="Piyush\EmailOtp\Model\GenerateOtp" />
+    <preference for="Piyush\EmailOtp\Api\Data\OtpSearchResultsInterface" type="Piyush\EmailOtp\Model\OtpSearchResults" />
+    <preference for="Piyush\EmailOtp\Api\OtpRepositoryInterface" type="Piyush\EmailOtp\Model\OtpRepository" />
+    <preference for="Piyush\EmailOtp\Api\SendMessageInterface" type="Piyush\EmailOtp\Model\SendMessage" />
+    <preference for="Piyush\EmailOtp\Api\OtpManagerInterface" type="Piyush\EmailOtp\Model\Api\OtpManager"/>
+    <preference for="Piyush\EmailOtp\Api\SendAndSaveOtpRequestInterface" type="Piyush\EmailOtp\Model\Api\SendAndSaveOtpRequest"/>
+    <preference for="Piyush\EmailOtp\Api\SendAndSaveOtpResponseInterface" type="Piyush\EmailOtp\Model\Api\SendAndSaveOtpResponse"/>
+    <preference for="Piyush\EmailOtp\Api\VerifyOtpRequestInterface" type="Piyush\EmailOtp\Model\Api\VerifyOtpRequest"/>
+</config>

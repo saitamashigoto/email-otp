@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="piyush_emailotp_otp" resource="default" comment="Click Send Otp Table">
+        <column xsi:type="int" name="entity_id" unsigned="true" identity="true" comment="Entity Id" />
+        <column xsi:type="varchar" name="ip_address" length="100" nullable="false" comment="IP Address" />
+        <column xsi:type="varchar" name="otp" length="100" nullable="false" comment="One Time Password" />
+        <column xsi:type="varchar" name="email" length="100" nullable="false" comment="Email" />
+        <column xsi:type="int" name="times" unsigned="true" nullable="false" default="1" comment="Times" />
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id" />
+        </constraint>
+        <constraint xsi:type="unique" referenceId="EMAIL_OTP">
+            <column name="email"/>
+            <column name="otp"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="IP_ADDRESS">
+            <column name="ip_address"/>
+        </constraint>
+    </table>
+</schema>

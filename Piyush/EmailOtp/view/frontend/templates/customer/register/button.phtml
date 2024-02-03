@@ -1,0 +1,143 @@
+<div id="modal" class="display-none">
+    <div class="modal-body-content">
+        <div class="emailotp-modal-container">
+            <div class="otp-message-container display-none"></div>
+            <div class="verify-otp-wrapper display-none">
+                <label for="otp" class="otp-label"><?= $escaper->escapeHtml(__("One Time Password (OTP)")); ?></label>
+                <input id="otp" name="otp" class="otp" type="text" />
+                <div class="otp-btn-container">
+                    <a href="javascript:void(0)" class="resend-link" >
+                        <?= $escaper->escapeHtml(__("Resend Otp")); ?>
+                    </a>
+                    <button name="verifyOtp" class="verify-otp-btn" type="button" >
+                        <?= $escaper->escapeHtml(__("Verify Otp and Proceed")); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    require([
+        "jquery",
+        "Magento_Ui/js/modal/modal",
+        "loader",
+        "mage/storage",
+        "ko",
+        "mage/validation",
+        "mage/translate",
+        "domReady!"
+    ], function($, modal, loader, storage, ko) {
+        
+        const isOtpValidated = ko.observable(false);
+
+        $("#modal").loader({
+            icon: "<?= $block->escapeUrl($block->getViewFileUrl('images/loader-1.gif')); ?>"
+        });
+        
+        const options = {
+            type: 'popup',
+            responsive: true,
+            title: '<?= $escaper->escapeHtml($block->getText()); ?>',
+            buttons: [{
+                text: $.mage.__('Cancel'),
+                class: '',
+                click: function () {
+                    this.closeModal();
+                }
+            }]
+        };
+
+        modal(options, $("#modal"));
+
+        $('#modal').on('modalclosed', function() {
+            $("#modal").loader("hide"); 
+        });
+
+
+        const resendLink = document.querySelector(".resend-link");
+        const otpMessageContainer = document.querySelector(".otp-message-container");
+        const verifyOtpWrapper = document.querySelector(".verify-otp-wrapper");
+        const verifyOtpBtn = document.querySelector(".verify-otp-btn");
+        const sendOtpUrl = "rest/V1/sendAndSaveOtp";
+        const verifyOtpUrl = "rest/V1/verifyOtp";
+
+
+        function addMessage(content, cssClass) {
+            otpMessageContainer.classList.remove('display-none');
+            const messageContent = document.createElement('p');
+            otpMessageContainer.innerHTML = "";
+            messageContent.classList.add(cssClass);
+            messageContent.innerHTML = content;
+            otpMessageContainer.appendChild(messageContent);
+        }
+
+        function sendOtpHandler(event) {
+            const payload = {
+                request: {
+                    email: $("#email_address").val()
+                }
+            }
+
+            $("#modal").loader("show");
+            
+            return storage.post(
+                sendOtpUrl, JSON.stringify(payload), true, 'application/json', {}
+            ).fail(
+                function (response) {
+                    addMessage($.mage.__("Unable to send the request. Please try again later."), "error");
+                }
+            ).done(
+                function (response) {
+                    addMessage($.mage.__("An otp has been sent to your " + $("#email_address").val()), "success");
+                    verifyOtpWrapper.classList.remove("display-none");
+                }
+            ).always(
+                function () {
+                    $("#modal").loader("hide");
+                }
+            );
+        }
+
+        resendLink.addEventListener("click", sendOtpHandler);
+
+        $("#form-validate").submit(function(e) {
+            if ($('#form-validate').validation() && $('#form-validate').validation('isValid') && false == isOtpValidated()) {
+                e.preventDefault();
+                $("#modal").removeClass('display-none').modal('openModal');
+                sendOtpHandler(null);
+            }
+        });
+
+        verifyOtpBtn.addEventListener('click', function(event) {
+            const payload = {
+                request: {
+                    email: $("#email_address").val(),
+                    otp: $("#otp").val()
+                }
+            }
+
+            return storage.post(
+                verifyOtpUrl, JSON.stringify(payload), true, 'application/json', {}
+            ).fail(
+                function (response) {
+                    addMessage($.mage.__("Unable to send the request. Please try again later."), "error");
+                }
+            ).done(
+                function (response) {
+                    if (response) {
+                        isOtpValidated(true);
+                        $("#form-validate").trigger("submit");
+                    } else {
+                        addMessage($.mage.__("Entered otp is incorrect."), "error");
+                    }
+                }
+            ).always(
+                function () {
+                    $("#modal").loader("hide");
+                }
+            );
+        });
+    });
+</script>

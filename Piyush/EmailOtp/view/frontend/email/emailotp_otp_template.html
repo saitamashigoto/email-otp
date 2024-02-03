@@ -1,0 +1,10 @@
+<!--@subject {{trans "One Time Password (OTP) for new customer registration on %store_name" store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var otp":"One Time Password(OTP)",
+} @-->
+
+{{template config_path="design/email/header_template"}}
+<table>
+    <tr>{{trans "Your One Time Password (OTP) for registring with us is %otp." otp=$otp}}</tr>
+</table>
+{{template config_path="design/email/footer_template"}}
